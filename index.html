@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPES SIMS - Teacher Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 70px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar-logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-text {
+            color: #fde047;
+            font-weight: bold;
+            font-size: 18px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .logo-text {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            padding-top: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #fde047;
+        }
+
+        .menu-item .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .menu-item .text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .menu-item .text {
+            opacity: 1;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 30px;
+            margin-left: 70px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar:hover ~ .main-content {
+            margin-left: 250px;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .page-title i {
+            font-size: 28px;
+            color: #667eea;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-info i {
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .btn-outline:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+
+        /* Section Title */
+        .section-title {
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .stat-card.purple {
+            border-color: #667eea;
+        }
+
+        .stat-card.green {
+            border-color: #48bb78;
+        }
+
+        .stat-card.orange {
+            border-color: #ed8936;
+        }
+
+        .stat-card i {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card.purple i {
+            color: #667eea;
+        }
+
+        .stat-card.green i {
+            color: #48bb78;
+        }
+
+        .stat-card.orange i {
+            color: #ed8936;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Students Section */
+        .students-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: #667eea;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-edit {
+            background: #718096;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background: #4a5568;
+        }
+
+        .btn-add-grade {
+            background: #667eea;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add-grade:hover {
+            background: #5a67d8;
+        }
+
+        /* Quick Entry Section */
+        .quick-entry {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .quick-entry h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-entry h3 i {
+            color: #48bb78;
+        }
+
+        .entry-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-group select,
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-save {
+            background: #48bb78;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-save:hover {
+            background: #38a169;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+            padding-right: 10px;
+            border-right: 1px solid #ddd;
+            margin-right: 5px;
+        }
+
+        .page-btn {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .page-title i {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .sidebar:hover {
+                width: 250px;
+            }
+            
+            .sidebar.show .menu-item .text {
+                opacity: 1;
+            }
+            
+            .sidebar.show .logo-text {
+                opacity: 1;
+            }
+            
+            .mobile-overlay.show {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px 20px;
+            }
+            
+            .sidebar:hover ~ .main-content,
+            .sidebar.show ~ .main-content {
+                margin-left: 0;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: auto;
+            }
+            
+            .user-info {
+                width: auto;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .entry-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .table {
+                min-width: 500px;
+            }
+            
+            .table th, .table td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 80px 15px 15px 15px;
+            }
+            
+            .content-wrapper,
+            .students-section,
+            .quick-entry {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 18px;
+            }
+            
+            .page-title i {
+                font-size: 20px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-value {
+                font-size: 28px;
+            }
+            
+            .stat-card i {
+                font-size: 28px;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .table {
+                min-width: 450px;
+            }
+            
+            .table th, .table td {
+                padding: 10px 6px;
+                font-size: 12px;
+            }
+            
+            .btn {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+            
+            .btn-edit,
+            .btn-add-grade {
+                padding: 5px 15px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .main-content {
+                padding: 80px 10px 10px 10px;
+            }
+            
+            .content-wrapper,
+            .students-section,
+            .quick-entry {
+                padding: 15px;
+            }
+            
+            .stat-value {
+                font-size: 24px;
+            }
+            
+            .table {
+                min-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <i class="ri-menu-line"></i>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-text">Teacher Menu</div>
+        </div>
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <div class="icon"><i class="ri-dashboard-line"></i></div>
+                <div class="text">Dashboard</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-group-line"></i></div>
+                <div class="text">My Students</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-edit-line"></i></div>
+                <div class="text">Enter Grades</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-file-list-line"></i></div>
+                <div class="text">View Grades</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-file-chart-line"></i></div>
+                <div class="text">Grade Reports</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-calendar-line"></i></div>
+                <div class="text">Class Schedule</div>
+            </a>
+            <a href="#" class="menu-item" onclick="logout()">
+                <div class="icon"><i class="ri-logout-box-line"></i></div>
+                <div class="text">Log Out</div>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="ri-school-line"></i>
+                    Teacher Interface
+                </h1>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <i class="ri-user-line"></i>
+                        <span>Teacher Name</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Title -->
+            <div class="section-title">GRADE 1 - SECTION MABINI</div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <i class="ri-group-2-line"></i>
+                    <div class="stat-value">25</div>
+                    <div class="stat-title">Total Students</div>
+                </div>
+                <div class="stat-card green">
+                    <i class="ri-file-list-3-line"></i>
+                    <div class="stat-value">18/25</div>
+                    <div class="stat-title">Grades Entered</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Table Section -->
+        <div class="students-section">
+            <div class="section-header">
+                <h2>
+                    <i class="ri-group-line"></i>
+                    My Students - Grade 1 Section Mabini
+                </h2>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Math Grade</th>
+                            <th>English Grade</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <!-- Table content will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="paginationContainer" style="display: none;">
+                <div class="pagination-controls">
+                    <span class="pagination-info" id="paginationInfo">
+                        Showing 1-10 of 25 students
+                    </span>
+                    <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>
+                        <i class="ri-arrow-left-line"></i> Previous
+                    </button>
+                    <button class="page-btn" id="nextBtn" onclick="nextPage()">
+                        Next <i class="ri-arrow-right-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Grade Entry -->
+        <div class="quick-entry">
+            <h3>
+                <i class="ri-speed-line"></i>
+                Quick Grade Entry
+            </h3>
+            <form class="entry-form" onsubmit="event.preventDefault(); saveGrade();">
+                <div class="form-group">
+                    <label>Student:</label>
+                    <select id="studentSelect">
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subject:</label>
+                    <select id="subjectSelect">
+                        <option>Mathematics</option>
+                        <option>English</option>
+                        <option>Science</option>
+                        <option>Filipino</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Grade:</label>
+                    <input type="number" id="gradeInput" placeholder="Enter grade" min="0" max="100">
+                </div>
+                <button type="submit" class="btn btn-save">
+                    <i class="ri-check-line"></i>
+                    SAVE
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Student data - 25 realistic students
+        const students = [
+            { name: 'Juan Dela Cruz', id: 'VPES-001', math: 88, english: 92 },
+            { name: 'Maria Santos', id: 'VPES-002', math: 95, english: 89 },
+            { name: 'Pedro Garcia', id: 'VPES-003', math: null, english: 85 },
+            { name: 'Ana Reyes', id: 'VPES-004', math: 91, english: 93 },
+            { name: 'Jose Rizal', id: 'VPES-005', math: 87, english: 90 },
+            { name: 'Sofia Mendoza', id: 'VPES-006', math: 94, english: 88 },
+            { name: 'Miguel Torres', id: 'VPES-007', math: null, english: null },
+            { name: 'Isabella Rodriguez', id: 'VPES-008', math: 82, english: 86 },
+            { name: 'Carlos Villanueva', id: 'VPES-009', math: 90, english: 91 },
+            { name: 'Luz Aquino', id: 'VPES-010', math: 88, english: null },
+            { name: 'Ramon Fernandez', id: 'VPES-011', math: 85, english: 87 },
+            { name: 'Elena Gonzales', id: 'VPES-012', math: 92, english: 94 },
+            { name: 'Diego Martinez', id: 'VPES-013', math: null, english: 83 },
+            { name: 'Camila Perez', id: 'VPES-014', math: 89, english: 90 },
+            { name: 'Sebastian Lopez', id: 'VPES-015', math: 86, english: 88 },
+            { name: 'Valentina Herrera', id: 'VPES-016', math: 93, english: 92 },
+            { name: 'Mateo Jimenez', id: 'VPES-017', math: 84, english: null },
+            { name: 'Emma Morales', id: 'VPES-018', math: 91, english: 89 },
+            { name: 'Leonardo Vargas', id: 'VPES-019', math: 87, english: 85 },
+            { name: 'Mia Castillo', id: 'VPES-020', math: null, english: 91 },
+            { name: 'Noah Ramos', id: 'VPES-021', math: 90, english: 93 },
+            { name: 'Zoe Flores', id: 'VPES-022', math: 88, english: 87 },
+            { name: 'Ethan Silva', id: 'VPES-023', math: 85, english: 86 },
+            { name: 'Aria Castro', id: 'VPES-024', math: 92, english: null },
+            { name: 'Lucas Ortega', id: 'VPES-025', math: 89, english: 90 }
+        ];
+
+        // Pagination variables
+        let currentPage = 1;
+        const itemsPerPage = 10;
+        const totalPages = Math.ceil(students.length / itemsPerPage);
+
+        // Function to render the table
+        function renderTable() {
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageStudents = students.slice(startIndex, endIndex);
+            
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+            
+            pageStudents.forEach(student => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${student.name}</td>
+                    <td>${student.id}</td>
+                    <td>${student.math || '-'}</td>
+                    <td>${student.english || '-'}</td>
+                    <td>
+                        ${(!student.math || !student.english) 
+                            ? '<button class="btn-add-grade" onclick="addGrade(\'' + student.id + '\')">ADD</button>'
+                            : '<button class="btn-edit" onclick="editGrade(\'' + student.id + '\')">EDIT</button>'}
+                    </td>
+                `;
+            });
+            
+            updatePagination();
+            updateStats();
+        }
+
+        // Function to update pagination UI
+        function updatePagination() {
+            const paginationContainer = document.getElementById('paginationContainer');
+            const paginationInfo = document.getElementById('paginationInfo');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // Show pagination if there are more than 10 students
+            if (students.length > itemsPerPage) {
+                paginationContainer.style.display = 'flex';
+                
+                const startItem = (currentPage - 1) * itemsPerPage + 1;
+                const endItem = Math.min(currentPage * itemsPerPage, students.length);
+                
+                paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${students.length} students`;
+                
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage === totalPages;
+            } else {
+                paginationContainer.style.display = 'none';
+            }
+        }
+
+        // Function to update stats
+        function updateStats() {
+            // Count grades entered
+            let gradesEntered = 0;
+            students.forEach(student => {
+                if (student.math && student.english) {
+                    gradesEntered++;
+                }
+            });
+            
+            // Update the grades entered stat
+            const gradesStat = document.querySelector('.stat-card.green .stat-value');
+            if (gradesStat) {
+                gradesStat.textContent = `${gradesEntered}/${students.length}`;
+            }
+        }
+
+        // Pagination functions
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        // Grade functions
+        function editGrade(studentId) {
+            const student = students.find(s => s.id === studentId);
+            alert(`Editing grades for ${student.name}`);
+        }
+
+        function addGrade(studentId) {
+            const student = students.find(s => s.id === studentId);
+            alert(`Adding grades for ${student.name}`);
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle i');
+
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+
+            // Change hamburger to X
+            if (sidebar.classList.contains('show')) {
+                toggleBtn.classList.remove('ri-menu-line');
+                toggleBtn.classList.add('ri-close-line');
+            } else {
+                toggleBtn.classList.remove('ri-close-line');
+                toggleBtn.classList.add('ri-menu-line');
+            }
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle i');
+
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            toggleBtn.classList.remove('ri-close-line');
+            toggleBtn.classList.add('ri-menu-line');
+        }
+
+        function saveGrade() {
+            const studentSelect = document.getElementById('studentSelect');
+            const subject = document.getElementById('subjectSelect').value;
+            const grade = document.getElementById('gradeInput').value;
+            
+            if (studentSelect.selectedIndex === 0 || !grade) {
+                alert('Please select a student and enter a grade.');
+                return;
+            }
+            
+            const studentName = studentSelect.value;
+            const student = students.find(s => s.name === studentName);
+            
+            if (student) {
+                if (subject === 'Mathematics') {
+                    student.math = parseInt(grade);
+                } else if (subject === 'English') {
+                    student.english = parseInt(grade);
+                }
+                renderTable();
+                alert(`Grade saved!\nStudent: ${studentName}\nSubject: ${subject}\nGrade: ${grade}`);
+                
+                // Reset form
+                studentSelect.selectedIndex = 0;
+                document.getElementById('gradeInput').value = '';
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+            }
+        }
+
+        // Populate student dropdown
+        function populateStudentDropdown() {
+            const select = document.getElementById('studentSelect');
+            select.innerHTML = '<option>Select Student</option>';
+            students.forEach(student => {
+                const option = document.createElement('option');
+                option.value = student.name;
+                option.textContent = student.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Close mobile menu when clicking on menu items
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768 && !this.getAttribute('onclick')) {
+                    closeMobileMenu();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.mobile-menu-toggle') && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.mobile-overlay')) {
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('show')) {
+                        closeMobileMenu();
+                    }
+                }
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTable();
+            populateStudentDropdown();
+        });
+    </script>
+</body>
+</html>
