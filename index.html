@@ -476,53 +476,7 @@
             background: #38a169;
         }
 
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            border-top: 1px solid #eee;
-            background: #f8f9fa;
-            border-radius: 0 0 12px 12px;
-        }
-
-        .pagination-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .pagination-info {
-            color: #666;
-            font-size: 14px;
-            padding-right: 10px;
-            border-right: 1px solid #ddd;
-            margin-right: 5px;
-        }
-
-        .page-btn {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .page-btn:hover:not(:disabled) {
-            background: #f8f9fa;
-            border-color: #667eea;
-        }
-
-        .page-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+        /* Responsive Styles */
         @media (max-width: 1024px) {
             .stats-grid {
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -542,17 +496,26 @@
                 display: block;
             }
             
+            /* Hide sidebar completely on mobile */
             .sidebar {
                 transform: translateX(-100%);
                 width: 250px;
             }
             
+            /* Show sidebar when toggled */
             .sidebar.show {
                 transform: translateX(0);
             }
             
+            /* Remove hover effect on mobile */
             .sidebar:hover {
                 width: 250px;
+                transform: translateX(-100%);
+            }
+            
+            /* Only expand when shown */
+            .sidebar.show:hover {
+                transform: translateX(0);
             }
             
             .sidebar.show .menu-item .text {
@@ -567,11 +530,13 @@
                 display: block;
             }
             
+            /* Remove margin from main content on mobile */
             .main-content {
                 margin-left: 0;
                 padding: 80px 20px 20px 20px;
             }
             
+            /* Keep main content in place when sidebar is shown */
             .sidebar:hover ~ .main-content,
             .sidebar.show ~ .main-content {
                 margin-left: 0;
@@ -701,15 +666,15 @@
             <div class="logo-text">Teacher Menu</div>
         </div>
         <div class="sidebar-menu">
-            <a href="#" class="menu-item active">
+            <a href="index.html" class="menu-item active">
                 <div class="icon"><i class="ri-dashboard-line"></i></div>
                 <div class="text">Dashboard</div>
             </a>
-            <a href="#" class="menu-item">
+            <a href="my_students.html" class="menu-item">
                 <div class="icon"><i class="ri-group-line"></i></div>
                 <div class="text">My Students</div>
             </a>
-            <a href="#" class="menu-item">
+            <a href="enter_grades.html" class="menu-item">
                 <div class="icon"><i class="ri-edit-line"></i></div>
                 <div class="text">Enter Grades</div>
             </a>
@@ -775,6 +740,10 @@
                     <i class="ri-group-line"></i>
                     My Students - Grade 1 Section Mabini
                 </h2>
+                <button class="btn btn-primary">
+                    <i class="ri-add-line"></i>
+                    ADD GRADE
+                </button>
             </div>
             
             <div class="table-container">
@@ -788,25 +757,36 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="studentsTableBody">
-                        <!-- Table content will be populated by JavaScript -->
+                    <tbody>
+                        <tr>
+                            <td>Juan Dela Cruz</td>
+                            <td>VPES-001</td>
+                            <td>88</td>
+                            <td>92</td>
+                            <td>
+                                <button class="btn-edit">EDIT</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maria Santos</td>
+                            <td>VPES-002</td>
+                            <td>95</td>
+                            <td>89</td>
+                            <td>
+                                <button class="btn-edit">EDIT</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pedro Garcia</td>
+                            <td>VPES-003</td>
+                            <td>-</td>
+                            <td>85</td>
+                            <td>
+                                <button class="btn-add-grade">ADD</button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-            </div>
-            
-            <!-- Pagination -->
-            <div class="pagination" id="paginationContainer" style="display: none;">
-                <div class="pagination-controls">
-                    <span class="pagination-info" id="paginationInfo">
-                        Showing 1-10 of 25 students
-                    </span>
-                    <button class="page-btn" id="prevBtn" onclick="previousPage()" disabled>
-                        <i class="ri-arrow-left-line"></i> Previous
-                    </button>
-                    <button class="page-btn" id="nextBtn" onclick="nextPage()">
-                        Next <i class="ri-arrow-right-line"></i>
-                    </button>
-                </div>
             </div>
         </div>
 
@@ -820,7 +800,10 @@
                 <div class="form-group">
                     <label>Student:</label>
                     <select id="studentSelect">
-                        <!-- Options will be populated by JavaScript -->
+                        <option>Select Student</option>
+                        <option>Juan Dela Cruz</option>
+                        <option>Maria Santos</option>
+                        <option>Pedro Garcia</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -845,134 +828,6 @@
     </main>
 
     <script>
-        // Student data - 25 realistic students
-        const students = [
-            { name: 'Juan Dela Cruz', id: 'VPES-001', math: 88, english: 92 },
-            { name: 'Maria Santos', id: 'VPES-002', math: 95, english: 89 },
-            { name: 'Pedro Garcia', id: 'VPES-003', math: null, english: 85 },
-            { name: 'Ana Reyes', id: 'VPES-004', math: 91, english: 93 },
-            { name: 'Jose Rizal', id: 'VPES-005', math: 87, english: 90 },
-            { name: 'Sofia Mendoza', id: 'VPES-006', math: 94, english: 88 },
-            { name: 'Miguel Torres', id: 'VPES-007', math: null, english: null },
-            { name: 'Isabella Rodriguez', id: 'VPES-008', math: 82, english: 86 },
-            { name: 'Carlos Villanueva', id: 'VPES-009', math: 90, english: 91 },
-            { name: 'Luz Aquino', id: 'VPES-010', math: 88, english: null },
-            { name: 'Ramon Fernandez', id: 'VPES-011', math: 85, english: 87 },
-            { name: 'Elena Gonzales', id: 'VPES-012', math: 92, english: 94 },
-            { name: 'Diego Martinez', id: 'VPES-013', math: null, english: 83 },
-            { name: 'Camila Perez', id: 'VPES-014', math: 89, english: 90 },
-            { name: 'Sebastian Lopez', id: 'VPES-015', math: 86, english: 88 },
-            { name: 'Valentina Herrera', id: 'VPES-016', math: 93, english: 92 },
-            { name: 'Mateo Jimenez', id: 'VPES-017', math: 84, english: null },
-            { name: 'Emma Morales', id: 'VPES-018', math: 91, english: 89 },
-            { name: 'Leonardo Vargas', id: 'VPES-019', math: 87, english: 85 },
-            { name: 'Mia Castillo', id: 'VPES-020', math: null, english: 91 },
-            { name: 'Noah Ramos', id: 'VPES-021', math: 90, english: 93 },
-            { name: 'Zoe Flores', id: 'VPES-022', math: 88, english: 87 },
-            { name: 'Ethan Silva', id: 'VPES-023', math: 85, english: 86 },
-            { name: 'Aria Castro', id: 'VPES-024', math: 92, english: null },
-            { name: 'Lucas Ortega', id: 'VPES-025', math: 89, english: 90 }
-        ];
-
-        // Pagination variables
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        const totalPages = Math.ceil(students.length / itemsPerPage);
-
-        // Function to render the table
-        function renderTable() {
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const pageStudents = students.slice(startIndex, endIndex);
-            
-            const tbody = document.getElementById('studentsTableBody');
-            tbody.innerHTML = '';
-            
-            pageStudents.forEach(student => {
-                const row = tbody.insertRow();
-                row.innerHTML = `
-                    <td>${student.name}</td>
-                    <td>${student.id}</td>
-                    <td>${student.math || '-'}</td>
-                    <td>${student.english || '-'}</td>
-                    <td>
-                        ${(!student.math || !student.english) 
-                            ? '<button class="btn-add-grade" onclick="addGrade(\'' + student.id + '\')">ADD</button>'
-                            : '<button class="btn-edit" onclick="editGrade(\'' + student.id + '\')">EDIT</button>'}
-                    </td>
-                `;
-            });
-            
-            updatePagination();
-            updateStats();
-        }
-
-        // Function to update pagination UI
-        function updatePagination() {
-            const paginationContainer = document.getElementById('paginationContainer');
-            const paginationInfo = document.getElementById('paginationInfo');
-            const prevBtn = document.getElementById('prevBtn');
-            const nextBtn = document.getElementById('nextBtn');
-            
-            // Show pagination if there are more than 10 students
-            if (students.length > itemsPerPage) {
-                paginationContainer.style.display = 'flex';
-                
-                const startItem = (currentPage - 1) * itemsPerPage + 1;
-                const endItem = Math.min(currentPage * itemsPerPage, students.length);
-                
-                paginationInfo.textContent = `Showing ${startItem}-${endItem} of ${students.length} students`;
-                
-                prevBtn.disabled = currentPage === 1;
-                nextBtn.disabled = currentPage === totalPages;
-            } else {
-                paginationContainer.style.display = 'none';
-            }
-        }
-
-        // Function to update stats
-        function updateStats() {
-            // Count grades entered
-            let gradesEntered = 0;
-            students.forEach(student => {
-                if (student.math && student.english) {
-                    gradesEntered++;
-                }
-            });
-            
-            // Update the grades entered stat
-            const gradesStat = document.querySelector('.stat-card.green .stat-value');
-            if (gradesStat) {
-                gradesStat.textContent = `${gradesEntered}/${students.length}`;
-            }
-        }
-
-        // Pagination functions
-        function previousPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        }
-
-        function nextPage() {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderTable();
-            }
-        }
-
-        // Grade functions
-        function editGrade(studentId) {
-            const student = students.find(s => s.id === studentId);
-            alert(`Editing grades for ${student.name}`);
-        }
-
-        function addGrade(studentId) {
-            const student = students.find(s => s.id === studentId);
-            alert(`Adding grades for ${student.name}`);
-        }
-
         function toggleMobileMenu() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.querySelector('.mobile-overlay');
@@ -1003,49 +858,26 @@
         }
 
         function saveGrade() {
-            const studentSelect = document.getElementById('studentSelect');
+            const student = document.getElementById('studentSelect').value;
             const subject = document.getElementById('subjectSelect').value;
             const grade = document.getElementById('gradeInput').value;
             
-            if (studentSelect.selectedIndex === 0 || !grade) {
+            if (student === 'Select Student' || !grade) {
                 alert('Please select a student and enter a grade.');
                 return;
             }
             
-            const studentName = studentSelect.value;
-            const student = students.find(s => s.name === studentName);
+            alert(`Grade saved!\nStudent: ${student}\nSubject: ${subject}\nGrade: ${grade}`);
             
-            if (student) {
-                if (subject === 'Mathematics') {
-                    student.math = parseInt(grade);
-                } else if (subject === 'English') {
-                    student.english = parseInt(grade);
-                }
-                renderTable();
-                alert(`Grade saved!\nStudent: ${studentName}\nSubject: ${subject}\nGrade: ${grade}`);
-                
-                // Reset form
-                studentSelect.selectedIndex = 0;
-                document.getElementById('gradeInput').value = '';
-            }
+            // Reset form
+            document.getElementById('studentSelect').value = 'Select Student';
+            document.getElementById('gradeInput').value = '';
         }
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 alert('Logging out...');
             }
-        }
-
-        // Populate student dropdown
-        function populateStudentDropdown() {
-            const select = document.getElementById('studentSelect');
-            select.innerHTML = '<option>Select Student</option>';
-            students.forEach(student => {
-                const option = document.createElement('option');
-                option.value = student.name;
-                option.textContent = student.name;
-                select.appendChild(option);
-            });
         }
 
         // Close mobile menu when clicking on menu items
@@ -1076,12 +908,6 @@
                     }
                 }
             }
-        });
-
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            renderTable();
-            populateStudentDropdown();
         });
     </script>
 </body>

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPES SIMS - My Students</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f6fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 70px;
+            height: 100vh;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: 250px;
+        }
+
+        .sidebar-logo {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .logo-text {
+            color: #fde047;
+            font-weight: bold;
+            font-size: 18px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .logo-text {
+            opacity: 1;
+        }
+
+        .sidebar-menu {
+            padding-top: 20px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #fde047;
+        }
+
+        .menu-item .icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 20px;
+        }
+
+        .menu-item .text {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar:hover .menu-item .text {
+            opacity: 1;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 998;
+        }
+
+        .main-content {
+            padding: 30px;
+            margin-left: 70px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar:hover ~ .main-content {
+            margin-left: 250px;
+        }
+
+        .content-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .page-title i {
+            font-size: 28px;
+            color: #667eea;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-info i {
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            text-align: center;
+            border-left: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .stat-card.purple {
+            border-color: #667eea;
+        }
+
+        .stat-card i {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card.purple i {
+            color: #667eea;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .students-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .section-header h2 {
+            font-size: 18px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 i {
+            color: #667eea;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 8px 12px 8px 35px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 250px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .student-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .student-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .student-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .student-id {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .student-row {
+            display: none;
+        }
+
+        .student-row.active {
+            display: table-row;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 0;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pagination {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-pagination:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .btn-pagination:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+            
+            .page-title {
+                font-size: 20px;
+            }
+            
+            .page-title i {
+                font-size: 24px;
+            }
+
+            .search-box input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .sidebar:hover {
+                width: 250px;
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show:hover {
+                transform: translateX(0);
+            }
+            
+            .sidebar.show .menu-item .text {
+                opacity: 1;
+            }
+            
+            .sidebar.show .logo-text {
+                opacity: 1;
+            }
+            
+            .mobile-overlay.show {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px 20px;
+            }
+            
+            .sidebar:hover ~ .main-content,
+            .sidebar.show ~ .main-content {
+                margin-left: 0;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .search-filter {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .search-box input {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table {
+                min-width: 700px;
+            }
+            
+            .table th, .table td {
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+
+            .pagination-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 80px 15px 15px 15px;
+            }
+            
+            .content-wrapper,
+            .students-section {
+                padding: 20px;
+            }
+            
+            .page-title {
+                font-size: 18px;
+            }
+
+            .search-box input {
+                width: 100%;
+                max-width: none;
+            }
+            
+            .table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <i class="ri-menu-line"></i>
+    </button>
+
+    <div class="mobile-overlay" onclick="closeMobileMenu()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-text">Teacher Menu</div>
+        </div>
+        <div class="sidebar-menu">
+            <a href="index.html" class="menu-item">
+                <div class="icon"><i class="ri-dashboard-line"></i></div>
+                <div class="text">Dashboard</div>
+            </a>
+            <a href="my_students.html" class="menu-item active">
+                <div class="icon"><i class="ri-group-line"></i></div>
+                <div class="text">My Students</div>
+            </a>
+            <a href="enter_grades.html" class="menu-item">
+                <div class="icon"><i class="ri-edit-line"></i></div>
+                <div class="text">Enter Grades</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-file-list-line"></i></div>
+                <div class="text">View Grades</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-file-chart-line"></i></div>
+                <div class="text">Grade Reports</div>
+            </a>
+            <a href="#" class="menu-item">
+                <div class="icon"><i class="ri-calendar-line"></i></div>
+                <div class="text">Class Schedule</div>
+            </a>
+            <a href="#" class="menu-item" onclick="logout()">
+                <div class="icon"><i class="ri-logout-box-line"></i></div>
+                <div class="text">Log Out</div>
+            </a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="content-wrapper">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="ri-group-line"></i>
+                    My Students
+                </h1>
+                <div class="header-actions">
+                    <div class="user-info">
+                        <i class="ri-user-line"></i>
+                        <span>Teacher Name</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <i class="ri-group-2-line"></i>
+                    <div class="stat-value" id="totalStudentsCount">25</div>
+                    <div class="stat-title">Total Students</div>
+                </div>
+                <div class="stat-card purple">
+                    <i class="ri-team-line"></i>
+                    <div class="stat-value" id="mabiniCount">10</div>
+                    <div class="stat-title">Mabini Section</div>
+                </div>
+                <div class="stat-card purple">
+                    <i class="ri-team-line"></i>
+                    <div class="stat-value" id="rizalCount">5</div>
+                    <div class="stat-title">Rizal Section</div>
+                </div>
+                <div class="stat-card purple">
+                    <i class="ri-team-line"></i>
+                    <div class="stat-value" id="bonifacioCount">5</div>
+                    <div class="stat-title">Bonifacio Section</div>
+                </div>
+                <div class="stat-card purple">
+                    <i class="ri-team-line"></i>
+                    <div class="stat-value" id="lunaCount">5</div>
+                    <div class="stat-title">Luna Section</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="students-section">
+            <div class="section-header">
+                <h2>
+                    <i class="ri-team-line"></i>
+                    Student Directory
+                </h2>
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="ri-search-line"></i>
+                        <input type="text" placeholder="Search students..." id="searchInput" onkeyup="searchStudents()">
+                    </div>
+                    <select class="filter-select" id="sectionFilter" onchange="filterBySection()">
+                        <option value="all">All Sections</option>
+                        <option value="Mabini">Grade 1 - Mabini</option>
+                        <option value="Rizal">Grade 1 - Rizal</option>
+                        <option value="Bonifacio">Grade 1 - Bonifacio</option>
+                        <option value="Luna">Grade 1 - Luna</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="table" id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Parent/Guardian</th>
+                            <th>Contact Number</th>
+                            <th>Email Address</th>
+                            <th>Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">JD</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Juan Dela Cruz</div>
+                                        <div class="student-id">VPES-001</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Carmen Dela Cruz</td>
+                            <td>+63 912 345 6789</td>
+                            <td>carmen.delacruz@email.com</td>
+                            <td>123 Rizal St., Brgy. San Juan, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">MS</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Maria Santos</div>
+                                        <div class="student-id">VPES-002</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Roberto Santos</td>
+                            <td>+63 917 234 5678</td>
+                            <td>roberto.santos@email.com</td>
+                            <td>456 Bonifacio Ave., Brgy. Lamot 1, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">PG</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Pedro Garcia</div>
+                                        <div class="student-id">VPES-003</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Elena Garcia</td>
+                            <td>+63 918 345 6789</td>
+                            <td>elena.garcia@email.com</td>
+                            <td>789 Mabini St., Brgy. Dayap, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">AR</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Ana Reyes</div>
+                                        <div class="student-id">VPES-004</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Rosa Reyes</td>
+                            <td>+63 919 456 7890</td>
+                            <td>rosa.reyes@email.com</td>
+                            <td>321 Del Pilar St., Brgy. Kanluran, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">ML</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Miguel Lopez</div>
+                                        <div class="student-id">VPES-005</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Carlos Lopez</td>
+                            <td>+63 920 567 8901</td>
+                            <td>carlos.lopez@email.com</td>
+                            <td>654 Luna St., Brgy. Prinza, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">LC</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Lisa Cruz</div>
+                                        <div class="student-id">VPES-006</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Patricia Cruz</td>
+                            <td>+63 921 678 9012</td>
+                            <td>patricia.cruz@email.com</td>
+                            <td>987 Aguinaldo Ave., Brgy. Silangan, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">JS</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Jose Silva</div>
+                                        <div class="student-id">VPES-007</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Luz Silva</td>
+                            <td>+63 922 789 0123</td>
+                            <td>luz.silva@email.com</td>
+                            <td>147 Burgos St., Brgy. Imok, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">LD</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Lina Domingo</div>
+                                        <div class="student-id">VPES-008</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Antonio Domingo</td>
+                            <td>+63 923 890 1234</td>
+                            <td>antonio.domingo@email.com</td>
+                            <td>258 Jacinto St., Brgy. Santo Tomas, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">MF</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Marco Fernandez</div>
+                                        <div class="student-id">VPES-009</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Gloria Fernandez</td>
+                            <td>+63 924 901 2345</td>
+                            <td>gloria.fernandez@email.com</td>
+                            <td>369 Manalili Ave., Brgy. Banaybanay, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Mabini">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">CN</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Carla Navarro</div>
+                                        <div class="student-id">VPES-010</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Isabel Navarro</td>
+                            <td>+63 925 012 3456</td>
+                            <td>isabel.navarro@email.com</td>
+                            <td>741 Salcedo St., Brgy. Mabacan, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Rizal">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">RC</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Ricardo Castro</div>
+                                        <div class="student-id">VPES-011</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Fernando Castro</td>
+                            <td>+63 926 123 4567</td>
+                            <td>fernando.castro@email.com</td>
+                            <td>852 Magallanes St., Brgy. Lamot 2, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Rizal">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">VT</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Victoria Torres</div>
+                                        <div class="student-id">VPES-012</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Carmen Torres</td>
+                            <td>+63 927 234 5678</td>
+                            <td>carmen.torres@email.com</td>
+                            <td>963 Lapu-Lapu St., Brgy. Balayhangin, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Rizal">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">DM</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Daniel Morales</div>
+                                        <div class="student-id">VPES-013</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Maria Morales</td>
+                            <td>+63 928 345 6789</td>
+                            <td>maria.morales@email.com</td>
+                            <td>174 Tandang Sora Ave., Brgy. Hanggan, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Rizal">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">EA</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Elena Aquino</div>
+                                        <div class="student-id">VPES-014</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Benjamin Aquino</td>
+                            <td>+63 929 456 7890</td>
+                            <td>benjamin.aquino@email.com</td>
+                            <td>285 Quezon Ave., Brgy. Maytalang I, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Rizal">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">AF</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Angelo Felipe</div>
+                                        <div class="student-id">VPES-015</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Remedios Felipe</td>
+                            <td>+63 930 567 8901</td>
+                            <td>remedios.felipe@email.com</td>
+                            <td>396 Taft St., Brgy. Maytalang II, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Bonifacio">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">GV</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Grace Villanueva</div>
+                                        <div class="student-id">VPES-016</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Eduardo Villanueva</td>
+                            <td>+63 931 678 9012</td>
+                            <td>eduardo.villanueva@email.com</td>
+                            <td>507 Osmeña St., Brgy. Paliparo, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Bonifacio">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">RP</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Rafael Pascual</div>
+                                        <div class="student-id">VPES-017</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Esperanza Pascual</td>
+                            <td>+63 932 789 0123</td>
+                            <td>esperanza.pascual@email.com</td>
+                            <td>618 Macapagal Ave., Brgy. Perez, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Bonifacio">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">IS</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Isabella Santiago</div>
+                                        <div class="student-id">VPES-018</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Ricardo Santiago</td>
+                            <td>+63 933 890 1234</td>
+                            <td>ricardo.santiago@email.com</td>
+                            <td>729 Roxas Blvd., Brgy. Parian, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Bonifacio">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">KL</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Kevin Lim</div>
+                                        <div class="student-id">VPES-019</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Nancy Lim</td>
+                            <td>+63 934 901 2345</td>
+                            <td>nancy.lim@email.com</td>
+                            <td>830 Laurel St., Brgy. Milagrosa, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Bonifacio">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">JR</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Jasmine Ramos</div>
+                                        <div class="student-id">VPES-020</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Corazon Ramos</td>
+                            <td>+63 935 012 3456</td>
+                            <td>corazon.ramos@email.com</td>
+                            <td>941 Diokno Ave., Brgy. Kutay, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Luna">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">EB</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Ethan Bautista</div>
+                                        <div class="student-id">VPES-021</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Oscar Bautista</td>
+                            <td>+63 936 123 4567</td>
+                            <td>oscar.bautista@email.com</td>
+                            <td>152 Gomez St., Brgy. Calumpang, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Luna">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">SM</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Sofia Mendoza</div>
+                                        <div class="student-id">VPES-022</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Leticia Mendoza</td>
+                            <td>+63 937 234 5678</td>
+                            <td>leticia.mendoza@email.com</td>
+                            <td>263 Arellano St., Brgy. Lamot 1, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Luna">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">NG</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Nathan Gutierrez</div>
+                                        <div class="student-id">VPES-023</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. Alfredo Gutierrez</td>
+                            <td>+63 938 345 6789</td>
+                            <td>alfredo.gutierrez@email.com</td>
+                            <td>374 Magsaysay Ave., Brgy. Santo Tomas, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Luna">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">ZM</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Zoe Manalo</div>
+                                        <div class="student-id">VPES-024</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mrs. Victoria Manalo</td>
+                            <td>+63 939 456 7890</td>
+                            <td>victoria.manalo@email.com</td>
+                            <td>485 Evangelista St., Brgy. Dayap, Calauan, Laguna</td>
+                        </tr>
+                        <tr class="student-row" data-section="Luna">
+                            <td>
+                                <div class="student-info">
+                                    <div class="student-avatar">TC</div>
+                                    <div class="student-details">
+                                        <div class="student-name">Timothy Chua</div>
+                                        <div class="student-id">VPES-025</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Mr. William Chua</td>
+                            <td>+63 940 567 8901</td>
+                            <td>william.chua@email.com</td>
+                            <td>596 Ejercito St., Brgy. Banaybanay, Calauan, Laguna</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                <div class="pagination-info" id="paginationInfo">
+                    Showing 1-10 of 25 students
+                </div>
+                <div class="pagination-buttons">
+                    <button class="btn-pagination" id="prevBtn" onclick="changePage(-1)">
+                        <i class="ri-arrow-left-s-line"></i>
+                        Previous
+                    </button>
+                    <button class="btn-pagination" id="nextBtn" onclick="changePage(1)">
+                        Next
+                        <i class="ri-arrow-right-s-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let allRows = [];
+        let filteredRows = [];
+        let currentSection = 'all';
+
+        function initializePagination() {
+            allRows = Array.from(document.querySelectorAll('.student-row'));
+            filteredRows = allRows;
+            updateSectionCounts();
+            showPage(currentPage);
+        }
+
+        function updateSectionCounts() {
+            const mabiniStudents = allRows.filter(row => row.getAttribute('data-section') === 'Mabini').length;
+            const rizalStudents = allRows.filter(row => row.getAttribute('data-section') === 'Rizal').length;
+            const bonifacioStudents = allRows.filter(row => row.getAttribute('data-section') === 'Bonifacio').length;
+            const lunaStudents = allRows.filter(row => row.getAttribute('data-section') === 'Luna').length;
+            
+            document.getElementById('mabiniCount').textContent = mabiniStudents;
+            document.getElementById('rizalCount').textContent = rizalStudents;
+            document.getElementById('bonifacioCount').textContent = bonifacioStudents;
+            document.getElementById('lunaCount').textContent = lunaStudents;
+            document.getElementById('totalStudentsCount').textContent = allRows.length;
+        }
+
+        function filterBySection() {
+            const sectionFilter = document.getElementById('sectionFilter').value;
+            currentSection = sectionFilter;
+            
+            // Hide all rows first
+            allRows.forEach(row => {
+                row.style.display = 'none';
+                row.classList.remove('active');
+            });
+            
+            if (sectionFilter === 'all') {
+                filteredRows = allRows;
+            } else {
+                filteredRows = allRows.filter(row => {
+                    return row.getAttribute('data-section') === sectionFilter;
+                });
+            }
+            
+            // Clear search input
+            document.getElementById('searchInput').value = '';
+            currentPage = 1;
+            showPage(currentPage);
+        }
+
+        function showPage(page) {
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            
+            // First hide all rows
+            allRows.forEach(row => {
+                row.style.display = 'none';
+                row.classList.remove('active');
+            });
+            
+            // Then show only the filtered rows for current page
+            filteredRows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = 'table-row';
+                    row.classList.add('active');
+                }
+            });
+
+            const totalStudents = filteredRows.length;
+            const showingStart = totalStudents > 0 ? start + 1 : 0;
+            const showingEnd = Math.min(end, totalStudents);
+            document.getElementById('paginationInfo').textContent = 
+                'Showing ' + showingStart + '-' + showingEnd + ' of ' + totalStudents + ' students';
+
+            document.getElementById('prevBtn').disabled = page === 1;
+            document.getElementById('nextBtn').disabled = end >= totalStudents;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+            currentPage += direction;
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            showPage(currentPage);
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle i');
+
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+
+            if (sidebar.classList.contains('show')) {
+                toggleBtn.classList.remove('ri-menu-line');
+                toggleBtn.classList.add('ri-close-line');
+            } else {
+                toggleBtn.classList.remove('ri-close-line');
+                toggleBtn.classList.add('ri-menu-line');
+            }
+        }
+
+        function closeMobileMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.mobile-overlay');
+            const toggleBtn = document.querySelector('.mobile-menu-toggle i');
+
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            toggleBtn.classList.remove('ri-close-line');
+            toggleBtn.classList.add('ri-menu-line');
+        }
+
+        function searchStudents() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            
+            let baseRows = currentSection === 'all' ? allRows : allRows.filter(row => {
+                return row.getAttribute('data-section') === currentSection;
+            });
+            
+            if (input === '') {
+                filteredRows = baseRows;
+            } else {
+                filteredRows = baseRows.filter(row => {
+                    const studentName = row.querySelector('.student-name').textContent.toLowerCase();
+                    const studentId = row.querySelector('.student-id').textContent.toLowerCase();
+                    return studentName.includes(input) || studentId.includes(input);
+                });
+            }
+            
+            currentPage = 1;
+            showPage(currentPage);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePagination();
+
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768 && !this.getAttribute('onclick')) {
+                        closeMobileMenu();
+                    }
+                });
+            });
+        });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.mobile-menu-toggle') && 
+                !e.target.closest('.sidebar') && 
+                !e.target.closest('.mobile-overlay')) {
+                if (window.innerWidth <= 768) {
+                    const sidebar = document.getElementById('sidebar');
+                    if (sidebar.classList.contains('show')) {
+                        closeMobileMenu();
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html
